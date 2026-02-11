@@ -1,0 +1,44 @@
+{
+  "name": "@tinyland-inc/tinyland-offer-builder",
+  "version": "0.1.0",
+  "description": "Schema.org Offer builder for ActivityPub commerce federation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "author": "Tinyland.dev",
+  "license": "Zlib AND LicenseRef-Tinyland-Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/tinyland/tinyland.dev",
+    "directory": "packages/tinyland-offer-builder"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
