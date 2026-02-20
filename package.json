@@ -1,5 +1,5 @@
 {
-  "name": "@tinyland-inc/tinyland-offer-builder",
+  "name": "@tummycrypt/tinyland-offer-builder",
   "version": "0.1.0",
   "description": "Schema.org Offer builder for ActivityPub commerce federation",
   "type": "module",
@@ -40,5 +40,9 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

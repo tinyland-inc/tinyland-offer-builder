@@ -1,5 +1,5 @@
 /**
- * @tinyland-inc/tinyland-offer-builder
+ * @tummycrypt/tinyland-offer-builder
  *
  * Schema.org Offer builder for ActivityPub commerce federation.
  * Framework-agnostic with dependency-injected tracing.
