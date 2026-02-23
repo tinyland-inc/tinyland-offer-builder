@@ -1,8 +1,8 @@
-/**
- * Dependency injection configuration for the OfferBuilder package.
- * Provides a tracer interface compatible with OpenTelemetry
- * with a no-op default for framework-agnostic usage.
- */
+
+
+
+
+
 
 export interface Span {
 	setAttribute(key: string, value: string | number | boolean): void;

@@ -1,7 +1,7 @@
-/**
- * OfferBuilderService - Builds Schema.org Offers from transaction configurations.
- * Framework-agnostic: uses DI for tracing instead of SvelteKit imports.
- */
+
+
+
+
 
 import { getConfig, noopTracer } from './config.js';
 import { TRANSACTION_MAPPINGS } from './transaction-mappings.js';
@@ -20,9 +20,9 @@ export class OfferBuilderService {
 		return getConfig().tracer ?? noopTracer;
 	}
 
-	/**
-	 * Build schema.org Offer from transaction config
-	 */
+	
+
+
 	buildOffer(
 		product: ProductItem,
 		transaction: TransactionConfig,
@@ -42,7 +42,7 @@ export class OfferBuilderService {
 				const productName = (fm.name as string) || product.title;
 				const offerId = `${baseUrl}/products/${product.slug}#offer-${transaction.type}`;
 
-				// Build price specification if monetary
+				
 				const priceSpec =
 					mapping.isMonetary && transaction.price
 						? this.buildPriceSpec(
@@ -52,11 +52,11 @@ export class OfferBuilderService {
 							)
 						: undefined;
 
-				// Determine availability
+				
 				const availability =
 					transaction.availability || mapping.defaultAvailability;
 
-				// Build offer
+				
 				const offer: SchemaOffer = {
 					'@context': 'https://schema.org',
 					'@type': 'Offer',
@@ -69,26 +69,26 @@ export class OfferBuilderService {
 					transactionType: transaction.type
 				};
 
-				// Add price info if monetary
+				
 				if (mapping.isMonetary && transaction.price) {
 					offer.price = transaction.price;
 					offer.priceCurrency = transaction.currency || 'USD';
 					offer.priceSpecification = priceSpec;
 				}
 
-				// Add external URL if present
+				
 				if (transaction.url) {
 					offer.externalUrl = transaction.url;
 				}
 
-				// Add seller info
+				
 				offer.seller = {
 					'@type': 'Organization',
 					name: 'Tinyland',
 					url: baseUrl
 				};
 
-				// Add item offered
+				
 				offer.itemOffered = {
 					'@type': 'Product',
 					name: productName,
@@ -97,16 +97,16 @@ export class OfferBuilderService {
 					image: fm.image as string | undefined
 				};
 
-				// Add required action hints
+				
 				if (!mapping.isMonetary) {
 					offer.requiresAction = this.getRequiredAction(transaction.type);
 				}
 
-				span.setStatus({ code: 1 }); // OK
+				span.setStatus({ code: 1 }); 
 				return offer;
 			} catch (error) {
 				span.recordException(error as Error);
-				span.setStatus({ code: 2, message: (error as Error).message }); // ERROR
+				span.setStatus({ code: 2, message: (error as Error).message }); 
 				throw error;
 			} finally {
 				span.end();
@@ -114,9 +114,9 @@ export class OfferBuilderService {
 		});
 	}
 
-	/**
-	 * Build all Offers for a product
-	 */
+	
+
+
 	buildAllOffers(product: ProductItem, baseUrl: string): SchemaOffer[] {
 		return this.tracer.startActiveSpan('OfferBuilderService.buildAllOffers', (span) => {
 			try {
@@ -125,7 +125,7 @@ export class OfferBuilderService {
 				const fm = product.frontmatter;
 				const transactions = (fm.transactions as TransactionConfig[]) || [];
 
-				// Filter enabled transactions and sort by priority
+				
 				const enabledTransactions = transactions
 					.filter((t) => t.enabled)
 					.sort((a, b) => (b.priority || 0) - (a.priority || 0));
@@ -135,11 +135,11 @@ export class OfferBuilderService {
 				);
 
 				span.setAttribute('offers.count', offers.length);
-				span.setStatus({ code: 1 }); // OK
+				span.setStatus({ code: 1 }); 
 				return offers;
 			} catch (error) {
 				span.recordException(error as Error);
-				span.setStatus({ code: 2, message: (error as Error).message }); // ERROR
+				span.setStatus({ code: 2, message: (error as Error).message }); 
 				throw error;
 			} finally {
 				span.end();
@@ -147,9 +147,9 @@ export class OfferBuilderService {
 		});
 	}
 
-	/**
-	 * Convert Offer to ActivityPub attachment
-	 */
+	
+
+
 	offerToActivityPubAttachment(offer: SchemaOffer): {
 		type: 'PropertyValue';
 		name: string;
@@ -158,12 +158,12 @@ export class OfferBuilderService {
 		const mapping = TRANSACTION_MAPPINGS[offer.transactionType];
 		let value = offer.name;
 
-		// Add price if monetary
+		
 		if (mapping?.isMonetary && offer.price) {
 			value += ` - ${offer.price} ${offer.priceCurrency}`;
 		}
 
-		// Add external link if present
+		
 		if (offer.externalUrl) {
 			value += ` (${offer.externalUrl})`;
 		}
@@ -175,9 +175,9 @@ export class OfferBuilderService {
 		};
 	}
 
-	/**
-	 * Build price specification
-	 */
+	
+
+
 	private buildPriceSpec(
 		price: number | string,
 		currency: string,
@@ -193,7 +193,7 @@ export class OfferBuilderService {
 			priceCurrency: currency
 		};
 
-		// Add VAT info for non-crypto
+		
 		if (!mapping.isCryptocurrency) {
 			spec.valueAddedTaxIncluded = false;
 		}
@@ -201,35 +201,35 @@ export class OfferBuilderService {
 		return spec;
 	}
 
-	/**
-	 * Get payment methods for transaction type
-	 */
+	
+
+
 	getPaymentMethods(transactionType: string): PaymentMethod[] {
 		const mapping = TRANSACTION_MAPPINGS[transactionType];
 		return mapping?.paymentMethods || [];
 	}
 
-	/**
-	 * Validate transaction configuration
-	 */
+	
+
+
 	validateTransaction(transaction: TransactionConfig): ValidationResult {
 		const errors: string[] = [];
 
-		// Check if type exists
+		
 		const mapping = TRANSACTION_MAPPINGS[transaction.type];
 		if (!mapping) {
 			errors.push(`Unknown transaction type: ${transaction.type}`);
 			return { valid: false, errors };
 		}
 
-		// Check if external URL is required
+		
 		if (mapping.requiresExternalUrl && !transaction.url) {
 			errors.push(
 				`Transaction type "${transaction.type}" requires an external URL`
 			);
 		}
 
-		// Validate URL format if present
+		
 		if (transaction.url) {
 			try {
 				new URL(transaction.url);
@@ -238,14 +238,14 @@ export class OfferBuilderService {
 			}
 		}
 
-		// Check if monetary transaction has price
+		
 		if (mapping.isMonetary && !transaction.price) {
 			errors.push(
 				`Monetary transaction type "${transaction.type}" requires a price`
 			);
 		}
 
-		// Validate price if present
+		
 		if (transaction.price !== undefined) {
 			const priceValue =
 				typeof transaction.price === 'string'
@@ -257,7 +257,7 @@ export class OfferBuilderService {
 			}
 		}
 
-		// Validate currency for monetary transactions
+		
 		if (mapping.isMonetary && transaction.currency) {
 			const validCurrencies = [
 				'USD',
@@ -276,7 +276,7 @@ export class OfferBuilderService {
 			}
 		}
 
-		// Validate cryptocurrency currency
+		
 		if (mapping.isCryptocurrency && transaction.currency) {
 			const cryptoCurrencies = ['XMR', 'BTC', 'ETH'];
 			if (!cryptoCurrencies.includes(transaction.currency)) {
@@ -292,9 +292,9 @@ export class OfferBuilderService {
 		};
 	}
 
-	/**
-	 * Get required action hint for non-monetary transactions
-	 */
+	
+
+
 	private getRequiredAction(transactionType: string): string {
 		const actions: Record<string, string> = {
 			inquiry: 'contact',
@@ -305,9 +305,9 @@ export class OfferBuilderService {
 		return actions[transactionType] || 'visit';
 	}
 
-	/**
-	 * Get display name for transaction type
-	 */
+	
+
+
 	private getTransactionDisplayName(transactionType: string): string {
 		const names: Record<string, string> = {
 			inquiry: 'Contact',
@@ -329,9 +329,9 @@ export class OfferBuilderService {
 		return names[transactionType] || transactionType;
 	}
 
-	/**
-	 * Get all transaction types with metadata
-	 */
+	
+
+
 	getAllTransactionTypes(): Array<{
 		type: string;
 		displayName: string;
@@ -351,5 +351,5 @@ export class OfferBuilderService {
 	}
 }
 
-// Singleton instance
+
 export const offerBuilderService = new OfferBuilderService();

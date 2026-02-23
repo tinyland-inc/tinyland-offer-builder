@@ -1,8 +1,8 @@
-/**
- * Schema.org Offer types for ActivityPub commerce federation
- * @see https://schema.org/Offer
- * @see https://schema.org/PriceSpecification
- */
+
+
+
+
+
 
 export type OfferAvailability =
 	| 'InStock'
@@ -94,10 +94,10 @@ export interface ValidationResult {
 	errors: string[];
 }
 
-/**
- * Framework-agnostic product item interface.
- * Replaces SvelteKit's UnifiedContentItem for portability.
- */
+
+
+
+
 export interface ProductItem {
 	slug: string;
 	title: string;

@@ -1,6 +1,6 @@
-/**
- * Mapping configuration for all 15 transaction types
- */
+
+
+
 
 import type { TransactionMapping } from './types.js';
 
@@ -172,30 +172,30 @@ export const TRANSACTION_MAPPINGS: Record<string, TransactionMapping> = {
 	}
 };
 
-/**
- * Get transaction mapping configuration
- */
+
+
+
 export function getTransactionMapping(type: string): TransactionMapping | undefined {
 	return TRANSACTION_MAPPINGS[type];
 }
 
-/**
- * Check if transaction type requires external URL
- */
+
+
+
 export function requiresExternalUrl(type: string): boolean {
 	return TRANSACTION_MAPPINGS[type]?.requiresExternalUrl ?? false;
 }
 
-/**
- * Check if transaction type is monetary
- */
+
+
+
 export function isMonetary(type: string): boolean {
 	return TRANSACTION_MAPPINGS[type]?.isMonetary ?? false;
 }
 
-/**
- * Get all supported transaction types
- */
+
+
+
 export function getSupportedTransactionTypes(): string[] {
 	return Object.keys(TRANSACTION_MAPPINGS);
 }
