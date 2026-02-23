@@ -1,18 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-	// Types used as values for runtime checks
+	
 	TRANSACTION_MAPPINGS,
 	getTransactionMapping,
 	requiresExternalUrl,
 	isMonetary,
 	getSupportedTransactionTypes,
-	// Config
+	
 	configure,
 	getConfig,
 	resetConfig,
 	noopTracer,
 	noopSpan,
-	// Service
+	
 	OfferBuilderService,
 	offerBuilderService,
 } from '../src/index.js';
@@ -26,9 +26,9 @@ import type {
 	Span,
 } from '../src/index.js';
 
-// ---------------------------------------------------------------------------
-// Test helpers
-// ---------------------------------------------------------------------------
+
+
+
 
 function makeProduct(overrides: Partial<ProductItem> = {}): ProductItem {
 	return {
@@ -51,9 +51,9 @@ function makeTransaction(overrides: Partial<TransactionConfig> = {}): Transactio
 
 const BASE_URL = 'https://tinyland.dev';
 
-// ---------------------------------------------------------------------------
-// 1. Types (5+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('Types', () => {
 	it('should accept valid OfferAvailability values', () => {
@@ -125,9 +125,9 @@ describe('Types', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 2. Config DI (10+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('Config DI', () => {
 	beforeEach(() => {
@@ -155,7 +155,7 @@ describe('Config DI', () => {
 
 	it('should merge partial config', () => {
 		configure({ tracer: noopTracer });
-		configure({}); // merge with empty
+		configure({}); 
 		expect(getConfig().tracer).toBe(noopTracer);
 	});
 
@@ -222,9 +222,9 @@ describe('Config DI', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 3. TRANSACTION_MAPPINGS (20+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('TRANSACTION_MAPPINGS', () => {
 	const ALL_TYPES = [
@@ -302,7 +302,7 @@ describe('TRANSACTION_MAPPINGS', () => {
 		expect(TRANSACTION_MAPPINGS['booking'].defaultAvailability).toBe('LimitedAvailability');
 	});
 
-	// Helper functions
+	
 	describe('getTransactionMapping', () => {
 		it('should return mapping for known type', () => {
 			const mapping = getTransactionMapping('stripe');
@@ -357,9 +357,9 @@ describe('TRANSACTION_MAPPINGS', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 4. buildOffer (25+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('buildOffer', () => {
 	let svc: OfferBuilderService;
@@ -584,7 +584,7 @@ describe('buildOffer', () => {
 			makeTransaction({ availability: undefined }),
 			BASE_URL
 		);
-		expect(offer.availability).toBe('InStock'); // stripe default
+		expect(offer.availability).toBe('InStock'); 
 	});
 
 	it('should set acceptedPaymentMethod from mapping', () => {
@@ -634,9 +634,9 @@ describe('buildOffer', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 5. buildAllOffers (10+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('buildAllOffers', () => {
 	let svc: OfferBuilderService;
@@ -778,9 +778,9 @@ describe('buildAllOffers', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 6. offerToActivityPubAttachment (10+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('offerToActivityPubAttachment', () => {
 	let svc: OfferBuilderService;
@@ -868,9 +868,9 @@ describe('offerToActivityPubAttachment', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 7. validateTransaction (20+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('validateTransaction', () => {
 	let svc: OfferBuilderService;
@@ -952,8 +952,8 @@ describe('validateTransaction', () => {
 
 	it('should pass for zero price', () => {
 		const result = svc.validateTransaction(makeTransaction({ price: 0 }));
-		// Note: 0 is falsy, so "monetary requires price" will trigger
-		// The actual source checks !transaction.price which is true for 0
+		
+		
 		expect(result.valid).toBe(false);
 	});
 
@@ -1032,9 +1032,9 @@ describe('validateTransaction', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 8. getAllTransactionTypes (5+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('getAllTransactionTypes', () => {
 	let svc: OfferBuilderService;
@@ -1101,9 +1101,9 @@ describe('getAllTransactionTypes', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 9. Singleton (3+ tests)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('Singleton', () => {
 	it('offerBuilderService should exist', () => {
@@ -1127,9 +1127,9 @@ describe('Singleton', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// 10. getPaymentMethods (bonus)
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('getPaymentMethods', () => {
 	let svc: OfferBuilderService;
